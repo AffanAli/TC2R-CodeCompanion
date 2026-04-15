@@ -52,3 +52,5 @@ data/*/*jpg
 data/*/*ann
 data/*/*pkl
 data/*/*icloud
+
+scripts/tests/output

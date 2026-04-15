@@ -1,7 +1,7 @@
 import unittest
 import os
 import shutil
-from helper_functions import pdf_to_text_with_ocr, pull_text_from_html, read_text_files
+from helper_functions import parse_days_from_context, pdf_to_text_with_ocr, pull_text_from_html, read_text_files
 
 class TestPdfToTextWithOcr(unittest.TestCase):
     """
@@ -330,6 +330,13 @@ class TestReadTextFiles(unittest.TestCase):
         self.assertIn('This is the content of file one.', file_list)
         self.assertIn('And this is the content of file two.', file_list)
 
+
+def test_parse_days_from_context():
+    assert parse_days_from_context("within 30 days") == 30
+    assert parse_days_from_context("after ten days") == 10
+    assert parse_days_from_context("a 14-day notice") == 14
+    assert parse_days_from_context("twenty-one days remaining") == 21
+    assert parse_days_from_context("no deadline mentioned") is None
 
 if __name__ == '__main__':
     unittest.main(argv=['first-arg-is-ignored'], exit=False)

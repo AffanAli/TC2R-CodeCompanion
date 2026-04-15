@@ -1,3 +1,4 @@
+import re
 import fitz
 import pandas as pd
 import pytesseract
@@ -6,9 +7,72 @@ from PIL import Image
 import spacy
 import os
 import matplotlib.pyplot as plt
-from typing import List
+from typing import List, Optional
 from bs4 import BeautifulSoup
 import pickle
+
+def parse_days_from_context(context: str) -> Optional[int]:
+    """
+    Extracts the number of days mentioned in a text context.
+
+    Parameters:
+    - context (str): Input text containing a reference to a number of days.
+
+    Returns:
+    - Optional[int]: The number of days as an integer if found; otherwise, None.
+
+    Examples:
+    >>> parse_days_from_context("The payment must be made within 30 days.")
+    30
+    >>> parse_days_from_context("You have ten days to respond.")
+    10
+    >>> parse_days_from_context("No deadline specified.")
+    None
+    """
+
+    if not context or not isinstance(context, str):
+        return None
+
+    context = context.lower()
+
+    # Dictionary for converting written numbers to integers
+    number_words = {
+        "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4,
+        "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9,
+        "ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13,
+        "fourteen": 14, "fifteen": 15, "sixteen": 16,
+        "seventeen": 17, "eighteen": 18, "nineteen": 19,
+        "twenty": 20, "thirty": 30, "forty": 40,
+        "fifty": 50, "sixty": 60, "seventy": 70,
+        "eighty": 80, "ninety": 90
+    }
+
+    def words_to_number(text: str) -> Optional[int]:
+        """Convert written number words (e.g., 'twenty-one') to integers."""
+        parts = re.split(r"[\s-]+", text)
+        total = 0
+        for part in parts:
+            if part in number_words:
+                total += number_words[part]
+            else:
+                return None
+        return total if total > 0 else None
+
+    # 1. Match numeric expressions (e.g., "30 days", "14-day")
+    numeric_pattern = re.search(r"\b(\d+)\s*[-]?\s*day[s]?\b", context)
+    if numeric_pattern:
+        return int(numeric_pattern.group(1))
+
+    # 2. Match written number expressions (e.g., "ten days", "twenty-one days")
+    word_pattern = re.search(
+        r"\b((?:\w+(?:[\s-]\w+)*))\s+day[s]?\b", context
+    )
+    if word_pattern:
+        number = words_to_number(word_pattern.group(1))
+        if number is not None:
+            return number
+
+    return None
 
 def pdf_to_text_with_ocr(pdf_path: str, output_txt_path: str):
     """
