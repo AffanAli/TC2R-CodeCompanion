@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  ai-pipeline:
+    build: .
+    image: ai-pipeline:1.0
+    container_name: ai-pipeline
+
+    volumes:
+      - ./tests/docs:/app/input
+      - ./tests/output:/app/output
+      - ./tests/model:/app/models
+
+    command: >
+      python pipeline.py
+      --input_folder /app/input
+      --output_folder /app/output
+      --model_folder /app/models
+      --output_format sqlite
+      --output_name model_results.db
+      --threshold 0.6
+
+    stdin_open: true
+    tty: true

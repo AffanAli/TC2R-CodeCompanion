@@ -1,0 +1,13 @@
+pandas
+openpyxl
+PyMuPDF
+pytesseract
+Pillow
+spacy
+matplotlib
+beautifulsoup4
+sentence-transformers
+scikit-learn==1.7.1
+numpy
+pytest
+coverage

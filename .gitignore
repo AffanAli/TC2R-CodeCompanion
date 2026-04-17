@@ -53,4 +53,6 @@ data/*/*ann
 data/*/*pkl
 data/*/*icloud
 
+datum/
+
 scripts/tests/output

@@ -1,4 +1,8 @@
-from helper_functions import parse_days_from_context
+try:
+    from .helper_functions import parse_days_from_context
+except ImportError:
+    from helper_functions import parse_days_from_context
+
 
 def test_parse_days_from_context():
     assert parse_days_from_context("within 30 days") == 30
@@ -10,3 +14,8 @@ def test_parse_days_from_context():
     assert parse_days_from_context("") is None
     assert parse_days_from_context(None) is None
     assert parse_days_from_context("no deadline mentioned") is None
+
+
+if __name__ == "__main__":
+    test_parse_days_from_context()
+    print("All parse_days_from_context tests passed.")
